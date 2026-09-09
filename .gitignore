@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+secrets/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime-generated uploads and local data
+uploads/
+tmp/
+temp/
+data/
+*.sqlite
+*.sqlite3
+*.db
+
+# Test coverage and build output
+coverage/
+dist/
+build/
+.cache/
+
+# Editor and operating system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

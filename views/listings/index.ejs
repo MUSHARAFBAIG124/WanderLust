@@ -1,0 +1,192 @@
+<% layout('/layout/boilerplate') %>
+<style>
+/* Filters Section */
+#filters {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 1rem 0;
+    scrollbar-width: none;
+}
+
+#filters::-webkit-scrollbar {
+    display: none;
+}
+
+/* Individual Filter */
+.filter{
+    text-decoration:none;
+    color:#555;
+    text-align:center;
+    min-width:70px;
+    opacity:0.7;
+    transition:all .3s ease;
+}
+
+.filter:hover{
+    color:black;
+    opacity:1;
+    transform:translateY(-2px);
+    cursor: pointer;
+    transform: translateY(-2px);
+
+}
+
+.filter i {
+    font-size: 1.2rem;
+}
+
+.filter p {
+    color: black;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+    margin-bottom: 0;
+}
+
+
+/* Tax Toggle */
+.tax-toggle {
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    padding: 0.8rem 1rem;
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    background: #fff;
+    flex-shrink: 0;
+}
+
+.tax-toggle p {
+    margin: 0;
+    margin-left: .6rem;
+    font-size: .9rem;
+}
+
+.tax-info {
+    display: none;
+}
+
+/* Mobile */
+@media (max-width:768px){
+
+    #filters{
+        gap:1rem;
+    }
+
+    .filter{
+        min-width:60px;
+    }
+
+    .filter i{
+        font-size:1rem;
+    }
+
+    .filter p{
+        font-size:.75rem;
+    }
+
+    .tax-toggle{
+        padding:.6rem .8rem;
+    }
+
+    .tax-toggle p{
+        display:none;
+    }
+}
+</style>
+ <div id="filters">
+    <div id="filters">
+
+    <a href="/listings/filter/Trending" class="filter">
+        <div><i class="fa-solid fa-fire"></i></div>
+        <p>Trending</p>
+    </a>
+
+    <a href="/listings/filter/Rooms" class="filter">
+        <div><i class="fa-solid fa-bed"></i></div>
+        <p>Rooms</p>
+    </a>
+
+    <a href="/listings/filter/Iconic Cities" class="filter">
+        <div><i class="fa-solid fa-mountain-city"></i></div>
+        <p>Iconic Cities</p>
+    </a>
+
+    <a href="/listings/filter/Mountains" class="filter">
+        <div><i class="fa-solid fa-mountain"></i></div>
+        <p>Mountains</p>
+    </a>
+
+    <a href="/listings/filter/Castles" class="filter">
+        <div><i class="fa-solid fa-fort-awesome"></i></div>
+        <p>Castles</p>
+    </a>
+
+    <a href="/listings/filter/Amazing Pools" class="filter">
+        <div><i class="fa-solid fa-person-swimming"></i></div>
+        <p>Amazing Pools</p>
+    </a>
+
+    <a href="/listings/filter/Camping" class="filter">
+        <div><i class="fa-solid fa-campground"></i></div>
+        <p>Camping</p>
+    </a>
+
+</div>
+<div class="tax-toggle">
+    <div class="form-check form-switch mb-0">
+        <input
+            class="form-check-input"
+            type="checkbox"
+            id="flexSwitchCheckDefault">
+    </div>
+
+    <p>Display total after taxes</p>
+</div>
+
+ 
+ </div>
+
+    
+
+<div class="row row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4 mt-3">
+    <% for(let listing of allListings){ %>
+
+    <div class="card col listing-card">
+        <a href="/listings/<%= listing._id %>" class="listings-link">
+            <div class="card listing-card">
+                <img src="<%= listing.image.url %>" class="card-img-top">
+
+                <div class="card-img-overlay">ABC</div>
+
+                <div class="card-body">
+                    <p class="card-text">
+                        <b><%= listing.title %></b><br>
+                        &#8377; <%= listing.price.toLocaleString("en-IN") %><br>
+                       <i class="tax-info"> &nbsp; &nbsp; +18% GST</i>
+                    </p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <% } %>
+</div>
+
+<script>
+    let taxSwitch=document.getElementById("flexSwitchCheckDefault");
+    taxSwitch.addEventListener("click",()=>{
+        let taxInfo=document.getElementsByClassName("tax-info");
+        for(info of taxInfo){
+            if(info.style.display != "inline"){
+                    info.style.display="inline";
+            }
+            else{
+                info.style.display="none"
+            }
+            
+        }
+    })
+</script>

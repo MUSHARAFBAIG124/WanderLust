@@ -1,0 +1,124 @@
+html {
+    height: 100%;
+}
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: "Plus Jakarta Sans", sans-serif !important;
+}
+
+.container {
+    flex: 1;
+    max-width: 90% !important;
+    width: 90% !important;
+}
+/* Navbar */
+.navbar {
+    height:5em;
+    background-color:white;
+}
+.fa-compass {
+    font-size: 2em;
+    color: #c8a4c1;
+}
+.nav-link {
+    font-size: 1.2em;
+    color: black !important;
+}
+/* footer */
+.f-info-links a{
+    text-decoration: none;
+    color: black
+}
+.f-info-links a:hover{
+    text-decoration: underline;
+   
+}
+.f-info-links,
+.f-info-socials,
+.f-info-copyright{
+    width:100%;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+
+}
+.f-info-socials i{
+    margin:1rem;
+    font-size: 1.2rem;
+}
+.f-info {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #ebebeb;
+    height: 8rem;
+}
+/* card */
+.listing-card{
+    border: none !important;
+    margin-bottom: 2rem;
+}
+
+.card-img-top{
+    border-radius: 1rem !important;
+    width: 100% !important;
+    height: 20rem !important;
+    object-fit: cover !important;
+}
+
+.card-body{
+    padding: 0 !important;
+}
+
+.card-text{
+    font-weight: 400 !important;
+}
+.listings-link{
+    text-decoration: none;
+}
+/* card effect */
+.card-img-overlay{
+    opacity: 0 ;
+}
+.card-img-overlay:hover{
+    opacity: 0.2;
+    background-color:white;
+
+}
+/* edit button*/
+.btn-dark {
+    background-color: rgb(255, 0, 30) !important;
+    border-color: blue !important;
+    color: white !important;
+}
+
+.btn-dark:hover {
+    background-color: darkblue !important;
+    border-color: darkblue !important;
+}
+/* show */
+.show-img{
+    height:30vh;
+}
+.btns {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.btns form {
+    width: 100px;
+}
+
+.btns button {
+    width: 100%;
+}
+.show-card{
+    padding-left:0;
+    padding-right:0
+}

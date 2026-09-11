@@ -1,12 +1,10 @@
-if(process.env.NODE_ENV !="production"){
 require('dotenv').config();
-}
 
 
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-const MongoUrl="mongodb://127.0.0.1:27017/wanderlust"
+const MongoUrl = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/wanderlust";
 const path = require('path');
 const methodOverride=require("method-override");
 const ejsmate=require('ejs-mate');
@@ -41,11 +39,23 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine('ejs', ejsmate); 
 app.use(express.static(path.join(__dirname, 'public')));
+
+if (process.env.NODE_ENV === "production") {
+    app.set("trust proxy", 1);
+}
+
+const sessionSecret = process.env.SESSION_SECRET;
+
+if (process.env.NODE_ENV === "production" && !sessionSecret) {
+    throw new Error("SESSION_SECRET must be set in production.");
+}
+
 const sessionOptions={
-    secret:"mysupersecretcode",
+    secret: sessionSecret || "development-only-session-secret",
     resave: false,
     saveUninitialized:true,
     cookie:{
+        secure: process.env.NODE_ENV === "production",
         expires:Date.now()+7*24*60*60*1000,
         maxAge:7*24*60*60*1000,
     }
@@ -98,7 +108,9 @@ app.use((err,req,res,next)=>{
     res.render("error.ejs",{err});
 })
 
-app.listen(8080, () => {
-    console.log('Server is running on port 8080');
+const port = process.env.PORT || 8080;
+
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });
 

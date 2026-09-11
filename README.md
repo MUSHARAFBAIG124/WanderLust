@@ -37,6 +37,8 @@ npm install
 Create a `.env` file in the project root. Do not commit this file.
 
 ```env
+MONGODB_URI=mongodb://127.0.0.1:27017/wanderlust
+SESSION_SECRET=replace_with_a_long_random_secret
 CLOUD_NAME=your_cloudinary_cloud_name
 CLOUD_API_KEY=your_cloudinary_api_key
 CLOUD_API_SECRET=your_cloudinary_api_secret
@@ -49,6 +51,16 @@ node app.js
 ```
 
 Open [http://localhost:8080](http://localhost:8080) in your browser.
+
+## Deploying to Render
+
+1. Push this repository to GitHub.
+2. Create a MongoDB Atlas database and allow connections from Render. Copy its connection string as `MONGODB_URI`.
+3. In Render, create a **Web Service** from this repository. Render detects the Node service using the `npm start` command.
+4. Set `NODE_ENV=production` and add `MONGODB_URI`, `SESSION_SECRET`, `CLOUD_NAME`, `CLOUD_API_KEY`, and `CLOUD_API_SECRET` as Render environment variables.
+5. Deploy and use the public Render URL shown in the service dashboard.
+
+Do not enter these secrets in source code or commit them to Git.
 
 ## Seed Sample Listings
 
@@ -76,7 +88,8 @@ views/       EJS templates
 
 - `.env`, `node_modules`, uploads, logs, certificates, and local database files are excluded by `.gitignore`.
 - Never commit Cloudinary keys, database credentials, passwords, or session secrets.
-- Before deploying, replace the development session secret in `app.js` with a strong secret loaded from an environment variable and use a production session store.
+- Production requires `SESSION_SECRET`; the application reads it from an environment variable.
+- Use a production session store before handling production traffic at scale.
 
 ## License
 

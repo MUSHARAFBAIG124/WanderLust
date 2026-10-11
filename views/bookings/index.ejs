@@ -1,0 +1,33 @@
+<% layout('/layout/boilerplate') %>
+
+<div class="row">
+  <div class="col-8 offset-2 mt-3">
+    <h3>My bookings</h3>
+
+    <% if (bookings.length === 0) { %>
+      <p>You have no bookings yet.</p>
+    <% } %>
+
+    <% for (let b of bookings) { %>
+      <div class="card p-3 mb-3">
+        <h5>
+          <% if (b.listing) { %>
+            <a href="/listings/<%= b.listing._id %>"><%= b.listing.title %></a>
+          <% } else { %>
+            Listing no longer available
+          <% } %>
+        </h5>
+        <p class="mb-1"><%= b.checkIn.toDateString() %> to <%= b.checkOut.toDateString() %></p>
+        <p class="mb-1">Guests: <%= b.guests %></p>
+        <p class="mb-1">Total: &#8377;<%= b.totalPrice.toLocaleString("en-IN") %></p>
+        <p class="mb-2">Status: <%= b.status %></p>
+
+        <% if (b.status === "confirmed") { %>
+          <form action="/bookings/<%= b._id %>?_method=DELETE" method="POST">
+            <button class="btn btn-sm btn-outline-danger">Cancel</button>
+          </form>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+</div>

@@ -1,8 +1,9 @@
 const listings = require("./models/listing.js");
 const Review = require("./models/reviews.js");
-const {listingSchema,reviewSchema}=require("./schema.js");
-const ExpressError=require("./utils/ExpressError.js");
+const Booking = require("./models/booking.js");
+const { listingSchema, reviewSchema, bookingSchema } = require("./schema.js");
 
+const ExpressError=require("./utils/ExpressError.js");
 
 module.exports.isLoggedIn=(req,res,next)=>{
      if(!req.isAuthenticated()){
@@ -83,6 +84,41 @@ module.exports.isReviewAuthor = async (req, res, next) => {
     if (!review.author.equals(req.user._id)) {
         req.flash("error", "You don't have permission to do that.");
         return res.redirect(`/listings/${id}`);
+    }
+
+    next();
+};
+module.exports.validateBooking = (req, res, next) => {
+    if (!req.body || !req.body.booking) {
+        throw new ExpressError(400, "Invalid request body");
+    }
+
+    const { error } = bookingSchema.validate(req.body);
+
+    if (error) {
+        const errMsg = error.details.map((el) => el.message).join(", ");
+        throw new ExpressError(400, errMsg);
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const checkIn = new Date(req.body.booking.checkIn);
+
+    if (checkIn < today) {
+        throw new ExpressError(400, "Check-in date cannot be in the past");
+    }
+
+    next();
+};
+
+module.exports.isBookingOwner = async (req, res, next) => {
+    let { bookingId } = req.params;
+
+    let booking = await Booking.findById(bookingId);
+
+    if (!booking || !booking.user.equals(req.user._id)) {
+        req.flash("error", "You don't have permission to do that.");
+        return res.redirect("/bookings");
     }
 
     next();

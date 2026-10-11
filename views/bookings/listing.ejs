@@ -1,0 +1,25 @@
+<% layout('/layout/boilerplate') %>
+
+<div class="row">
+  <div class="col-8 offset-2 mt-3">
+    <h3>Bookings for <%= listing.title %></h3>
+    <a href="/listings/<%= listing._id %>" class="btn btn-sm btn-outline-dark mb-3">Back to listing</a>
+
+    <% if (bookings.length === 0) { %>
+      <p>No bookings yet.</p>
+    <% } %>
+
+    <% for (let b of bookings) { %>
+      <div class="card p-3 mb-3">
+        <h5><%= b.user ? b.user.username : "Deleted user" %></h5>
+        <% if (b.user) { %>
+          <p class="mb-1">Email: <%= b.user.email %></p>
+        <% } %>
+        <p class="mb-1"><%= b.checkIn.toDateString() %> to <%= b.checkOut.toDateString() %></p>
+        <p class="mb-1">Guests: <%= b.guests %></p>
+        <p class="mb-1">Total: &#8377;<%= b.totalPrice.toLocaleString("en-IN") %></p>
+        <p class="mb-0">Status: <%= b.status %></p>
+      </div>
+    <% } %>
+  </div>
+</div>

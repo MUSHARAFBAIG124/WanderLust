@@ -48,6 +48,7 @@ module.exports.createBooking = async (req, res) => {
     res.redirect("/bookings");
 };
 
+
 module.exports.myBookings = async (req, res) => {
     const bookings = await Booking.find({ user: req.user._id })
         .populate("listing")
@@ -60,4 +61,12 @@ module.exports.cancelBooking = async (req, res) => {
     await Booking.findByIdAndUpdate(bookingId, { status: "cancelled" });
     req.flash("success", "Booking cancelled");
     res.redirect("/bookings");
+};
+module.exports.listingBookings = async (req, res) => {
+    const { id } = req.params;
+    const listing = await Listing.findById(id);
+    const bookings = await Booking.find({ listing: id })
+        .populate("user", "username email")
+        .sort({ checkIn: 1 });
+    res.render("bookings/listing.ejs", { listing, bookings });
 };

@@ -26,7 +26,7 @@
             <form method="get" action="/listings/<%= listing._id %>/edit">
                 <button class="btn btn-dark">Edit</button>
             </form>
-
+                <a href="/listings/<%= listing._id %>/bookings" class="btn btn-dark">View bookings</a>
             <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
                 <button class="btn btn-dark">Delete</button>
             </form>

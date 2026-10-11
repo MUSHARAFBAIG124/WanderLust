@@ -1,31 +1,31 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
-const initData = require("./data.js");
 const Listing = require("../models/listing.js");
+const User = require("../models/user.js");
+const { data } = require("./data.js");
 
-const MongoUrl = "mongodb://127.0.0.1:27017/wanderlust";
+const MongoUrl = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/wanderlust";
 
-async function main() {
+async function seed() {
     await mongoose.connect(MongoUrl);
-    console.log("Connected to database");
 
-    await initDB();
+    // Use your own user as the owner of all seeded listings
+    const owner =
+        (await User.findOne({ username: "Musharaf" })) || (await User.findOne());
+    if (!owner) {
+        console.log("No user found. Sign up on the site first, then run this again.");
+        process.exit(1);
+    }
 
-    mongoose.connection.close();
-}
-
-main().catch((err) => {
-    console.log(err);
-});
-
-async function initDB() {
     await Listing.deleteMany({});
+    const listings = data.map((obj) => ({ ...obj, owner: owner._id }));
+    await Listing.insertMany(listings);
 
-    initData.data = initData.data.map((obj) => ({
-        ...obj,
-        owner: new mongoose.Types.ObjectId("6a60a6a80e591abb1625cffd"),
-    }));
-
-    await Listing.insertMany(initData.data);
-
-    console.log("Database initialized with sample data.");
+    console.log(`Seeded ${listings.length} listings. Owner: ${owner.username}`);
+    await mongoose.connection.close();
 }
+
+seed().catch((err) => {
+    console.log(err);
+    process.exit(1);
+});

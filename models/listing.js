@@ -19,6 +19,12 @@ const listingSchema = new Schema({
         type: Number,
         required: true
     },
+    latitude: {
+    type: Number,
+    },
+    longitude: {
+    type: Number,
+    },
 
     location: String,
 

@@ -6,6 +6,8 @@ module.exports.listingSchema = Joi.object({
         description: Joi.string().required(),
         location: Joi.string().required(),
         country: Joi.string().required(),
+         latitude: Joi.number().min(-90).max(90).allow("", null),
+        longitude: Joi.number().min(-180).max(180).allow("", null),
         price: Joi.number().required().min(0),
 
         category: Joi.string()
@@ -38,3 +40,5 @@ module.exports.bookingSchema = Joi.object({
     guests: Joi.number().integer().min(1).required(),
   }).required(),
 });
+
+

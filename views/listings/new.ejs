@@ -8,6 +8,7 @@
        <div class="valid-feedback">
             Title looks good!
         </div>
+        </div>
         <div>
             <label for="description" class="form-label">Description</label>
             <textarea name="listing[description]" class="form-control" required ></textarea>
@@ -65,11 +66,12 @@
         </div>
 
        </div>
-       <br>
+
+       <%- include('../includes/mapPicker.ejs', { lat: "", lng: "" }) %>
+
        <br>
        
         <button class="btn btn-dark">Add</button>
 
     </form>
 </div>
-

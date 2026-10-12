@@ -1,0 +1,113 @@
+<div class="mb-3 mt-3">
+  <label class="form-label">Pin the location on the map</label>
+  <div class="mb-2">
+    <button type="button" id="findOnMap" class="btn btn-sm btn-outline-dark">
+      Find from location and country
+    </button>
+    <span id="pinStatus" class="text-muted ms-2"></span>
+  </div>
+
+  <div id="pickMap"
+       data-lat="<%= typeof lat !== 'undefined' && lat ? lat : '' %>"
+       data-lng="<%= typeof lng !== 'undefined' && lng ? lng : '' %>"></div>
+  <small class="text-muted">Click the map or drag the pin to adjust the exact spot.</small>
+
+  <input type="hidden" name="listing[latitude]" id="latInput"
+         value="<%= typeof lat !== 'undefined' && lat ? lat : '' %>">
+  <input type="hidden" name="listing[longitude]" id="lngInput"
+         value="<%= typeof lng !== 'undefined' && lng ? lng : '' %>">
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<style>
+  #pickMap { height: 320px; width: 100%; border-radius: 12px; }
+</style>
+<script>
+  (function () {
+    const mapEl = document.getElementById("pickMap");
+    const latInput = document.getElementById("latInput");
+    const lngInput = document.getElementById("lngInput");
+    const status = document.getElementById("pinStatus");
+
+    const startLat = parseFloat(mapEl.dataset.lat);
+    const startLng = parseFloat(mapEl.dataset.lng);
+    const hasStart = !isNaN(startLat) && !isNaN(startLng);
+
+    const map = L.map("pickMap").setView(
+      hasStart ? [startLat, startLng] : [22.5, 79],
+      hasStart ? 12 : 4
+    );
+
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap contributors",
+    }).addTo(map);
+
+    let marker = null;
+
+    function setPoint(lat, lng, zoom) {
+      if (marker) {
+        marker.setLatLng([lat, lng]);
+      } else {
+        marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+        marker.on("dragend", function () {
+          const p = marker.getLatLng();
+          setPoint(p.lat, p.lng);
+        });
+      }
+      latInput.value = lat.toFixed(6);
+      lngInput.value = lng.toFixed(6);
+      status.textContent = "Pinned: " + lat.toFixed(4) + ", " + lng.toFixed(4);
+      if (zoom) map.setView([lat, lng], zoom);
+    }
+
+    map.on("click", function (e) {
+      setPoint(e.latlng.lat, e.latlng.lng);
+    });
+
+    if (hasStart) {
+      setPoint(startLat, startLng);
+    } else {
+      status.textContent = "No pin yet. Click the map or use the button.";
+    }
+
+    // Find the place from the typed location + country
+    document.getElementById("findOnMap").addEventListener("click", async function () {
+      const loc = document.querySelector('[name="listing[location]"]').value.trim();
+      const country = document.querySelector('[name="listing[country]"]').value.trim();
+      if (!loc) {
+        status.textContent = "Type the location first.";
+        return;
+      }
+      status.textContent = "Searching...";
+      try {
+        const res = await fetch(
+          "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
+            encodeURIComponent(loc + ", " + country)
+        );
+        const data = await res.json();
+        if (!data.length) {
+          status.textContent = "Not found. Click the map to place the pin.";
+          return;
+        }
+        setPoint(parseFloat(data[0].lat), parseFloat(data[0].lon), 13);
+      } catch (err) {
+        status.textContent = "Search failed. Click the map to place the pin.";
+      }
+    });
+
+    // Remind the owner to update the pin if the place text changes
+    ["listing[location]", "listing[country]"].forEach(function (name) {
+      const input = document.querySelector('[name="' + name + '"]');
+      if (input) {
+        input.addEventListener("change", function () {
+          status.textContent = "Place changed. Press the button to move the pin.";
+        });
+      }
+    });
+
+    // Fix size if the page layout shifts after load
+    window.addEventListener("load", function () { map.invalidateSize(); });
+  })();
+</script>

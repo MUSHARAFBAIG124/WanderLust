@@ -1,4 +1,5 @@
 const listings = require("../models/listing.js");
+const geocode = require("../utils/geocode.js"); // NEW
 
 // Index Route
 module.exports.index = async (req, res) => {
@@ -25,11 +26,6 @@ module.exports.search=async (req,res)=>{
 
     res.render("listings/index", { allListings: listings1 });
 }
-
-
-
-
-
 
 // Show Route
 module.exports.showListing = async (req, res) => {
@@ -62,6 +58,13 @@ module.exports.createListing = async (req, res) => {
         url: req.file.path,
         filename: req.file.filename,
     };
+
+    // NEW: find map coordinates from the location
+    const coords = await geocode(newListing.location, newListing.country);
+    if (coords) {
+        newListing.latitude = coords.latitude;
+        newListing.longitude = coords.longitude;
+    }
 
     await newListing.save();
 
@@ -96,11 +99,27 @@ module.exports.updateListing = async (req, res) => {
         };
     }
 
+    // NEW: remember whether the place changed (or has no coordinates yet)
+    const placeChanged =
+        listing.location !== req.body.listing.location ||
+        listing.country !== req.body.listing.country ||
+        !listing.latitude;
+
     listing.title = req.body.listing.title;
     listing.description = req.body.listing.description;
     listing.price = req.body.listing.price;
     listing.location = req.body.listing.location;
     listing.country = req.body.listing.country;
+    listing.category = req.body.listing.category;
+
+    // NEW: only call the geocoder when needed
+    if (placeChanged) {
+        const coords = await geocode(listing.location, listing.country);
+        if (coords) {
+            listing.latitude = coords.latitude;
+            listing.longitude = coords.longitude;
+        }
+    }
 
     await listing.save();
 
@@ -122,10 +141,7 @@ module.exports.destroyListing = async (req, res) => {
 module.exports.filterCategory = async (req, res) => {
     const { category } = req.params;
 
-
     const allListings = await listings.find({ category });
-
-   
 
     res.render("listings/index", { allListings });
 };

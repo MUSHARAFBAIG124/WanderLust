@@ -1,6 +1,5 @@
 <% layout('/layout/boilerplate') %>
 <div class="col-8 mt-3">
-<body>
     <form
     method="POST"
     action="/listings/<%= listing._id %>?_method=PUT"
@@ -52,7 +51,15 @@
             Price should be valid
         </div>
         </div>
-        
+<div class="mb-3">
+    <label class="form-label">Category</label>
+    <select name="listing[category]" class="form-select" required>
+        <% const categories = ["Trending", "Rooms", "Iconic Cities", "Mountains", "Castles", "Amazing Pools", "Camping"]; %>
+        <% for (let c of categories) { %>
+            <option value="<%= c %>" <%= listing.category === c ? "selected" : "" %>><%= c %></option>
+        <% } %>
+    </select>
+</div>
        <div class="mb-3 col-4">
             <label for="country" class="form-label">country</label>
              <input name="listing[country]" value="<%=listing.country %>" type="text" class="form-control" required>
@@ -71,12 +78,12 @@
             Location should be valid
         </div>
             </div>
-       <br>
+
+       <%- include('../includes/mapPicker.ejs', { lat: listing.latitude, lng: listing.longitude }) %>
+
        <br>
        
         <button class="btn btn-dark">Edit</button>
 
-
     </form>
-</body>
 </div>
